@@ -1,31 +1,31 @@
 import {ProtectRoute} from "../contexts/auth";
-import {connect, useDispatch} from 'react-redux'
+import {connect} from 'react-redux'
 import {State, stateWrapper} from "../store";
-import React, {useEffect} from "react";
+import React from "react";
 import {userLedger} from "../contexts/ledger";
-import TransactionGrop from "../components/TransactionGrop";
+import TransactionGroup from "../components/TransactionGroup";
 
 export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, res, ...etc}) => {
-  // console.log('2. Page.getServerSideProps uses the store to dispatch things');
-  store.dispatch({type: 'TICK', payload: 'was set in other page'});
+    // console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    store.dispatch({type: 'TICK', payload: 'was set in other page'});
 })
 
 
 function Transactions(state: State) {
-  const {ledger_id, transactions} = userLedger();
+    const {ledger_id, transactions} = userLedger();
 
-  const transactionGroups  = Object.entries(transactions).sort((a, b) => new Date(a[0]) - new Date(b[0])).reverse().map(item => {
-    const [date, trxs] = item;
-    return <TransactionGrop key={date} date={date} items={trxs} />
-  })
-  return (
-    <>
-      <h1>Transactions for ledger {ledger_id}</h1>
-      {transactionGroups}
+    const transactionGroups = Object.entries(transactions).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()).reverse().map(item => {
+        const [date, trxs] = item;
+        return <TransactionGroup key={date} date={date} items={trxs}/>
+    })
+    return (
+        <>
+            <h1>Transactions for ledger {ledger_id}</h1>
+            {transactionGroups}
 
-    </>
+        </>
 
-  )
+    )
 }
 
 export default connect(state => state)(ProtectRoute(Transactions))
