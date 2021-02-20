@@ -12,7 +12,8 @@ const api = Axios.create({
         'Content-Type': 'application/json'
     }
 })
-export const apiFetcher = url => api.get(url).then(res => res.data);
+export const apiGetter = url => api.get(url).then(res => res.data);
+export const apiPoster = (url, data) => api.post(url, data).then(res => res.data);
 
 export default api;
 
