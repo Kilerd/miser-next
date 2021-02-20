@@ -6,7 +6,6 @@ import {useAuth} from "../contexts/auth";
 export default function Home() {
 
   const {user} = useAuth();
-  console.log("suer", user);
 
   const userButton = user === undefined ? (
     <>
@@ -16,6 +15,7 @@ export default function Home() {
   ) : (
     <>
       <p><Link href="/dashbroad">dashbroad</Link></p>
+      <p><Link href="/transactions">transactions</Link></p>
       <p><Link href="/journals">Journals</Link></p>
       <p><Link href="/logout">logout</Link></p>
     </>
