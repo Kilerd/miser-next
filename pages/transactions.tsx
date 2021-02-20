@@ -12,19 +12,12 @@ export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, 
 
 
 function Transactions(state: State) {
-
-  console.log("start transaction page")
-  // const {data, error} = useSWR("/user", apiFetcher);
-
   const {ledger_id, transactions} = userLedger();
-  console.log(transactions);
+
   const transactionGroups  = Object.entries(transactions).sort((a, b) => new Date(a[0]) - new Date(b[0])).reverse().map(item => {
     const [date, trxs] = item;
-
     return <TransactionGrop key={date} date={date} items={trxs} />
   })
-
-
   return (
     <>
       <h1>Transactions for ledger {ledger_id}</h1>
@@ -34,6 +27,5 @@ function Transactions(state: State) {
 
   )
 }
-
 
 export default connect(state => state)(ProtectRoute(Transactions))

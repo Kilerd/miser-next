@@ -7,7 +7,6 @@ import {LedgerProvider} from "../contexts/ledger";
 
 const WrappedApp: FC<AppProps> = ({Component, pageProps}) => {
     const store = useStore();
-    console.log("wrapper", store);
     return (
         <AuthProvider>
             <LedgerProvider>

@@ -33,9 +33,7 @@ export const AuthProvider = ({children}) => {
   const [loading, setLoading] = useState(true);
 
   const token = Cookies.get('token')
-  console.log("token", token);
   if (token) {
-    console.log("Got a token in the cookies, let's see if it is valid");
     api.defaults.headers.Authorization = `Bearer ${token}`;
   }
   useEffect(() => {
@@ -57,26 +55,21 @@ export const AuthProvider = ({children}) => {
     const {data: resData} = await api.post('/authorization', {email, password})
     let token = resData.data;
     if (token) {
-      console.log("Got token")
       Cookies.set('token', token, {expires: 60})
       api.defaults.headers.Authorization = `Bearer ${token}`
       const {data: user} = await api.get('/user')
       setUser(user.data)
-      console.log("Got user", user)
     }
   }
 
   const register = async (email, username, password) => {
     const {data: resData} = await api.post('/user', {email, username, password})
-    console.log("resData", resData);
     const token = resData.data;
     if (token) {
-      console.log("Got token")
       Cookies.set('token', token, {expires: 60})
       api.defaults.headers.Authorization = `Bearer ${token}`
       const {data: user} = await api.get('/user')
       setUser(user)
-      console.log("Got user", user)
     }
   }
   const logout = () => {
