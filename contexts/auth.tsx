@@ -96,7 +96,8 @@ export const ProtectRoute = (ChildComponent) => (args) => {
     return <div>loading</div>
   }
   if (!isAuthenticated && !UNAUTHENTICATED_ROUTE.includes(router.asPath)) {
-    router.push("/login");
+    router.push("/");
+    return <div>loading</div>;
   }
   return <ChildComponent {...args} />;
 };
