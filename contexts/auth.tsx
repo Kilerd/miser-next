@@ -1,16 +1,8 @@
-import React, {createContext, useState, useContext, useEffect} from 'react'
+import React, {createContext, useContext, useEffect, useState} from 'react'
 import Cookies from 'js-cookie'
-import Router, {useRouter} from 'next/router'
+import {useRouter} from 'next/router'
 import api from '../api'
-
-
-export interface User {
-  id: number,
-  username: string,
-  email: string,
-  avatar: string,
-  ledgers: string[]
-}
+import {User} from "../types";
 
 
 export interface AuthContextType {
@@ -34,12 +26,12 @@ export const AuthProvider = ({children}) => {
 
   const token = Cookies.get('token')
   if (token) {
-    api.defaults.headers.Authorization = `Bearer ${token}`;
+    api.client.defaults.headers.Authorization = `Bearer ${token}`;
   }
   useEffect(() => {
     async function loadUserFromCookies() {
-      const {data: user} = await api.get('/user')
-      if (user) setUser(user.data);
+      const user = await api.getUserInfo()
+      if (user) setUser(user);
       setLoading(false);
     }
 
@@ -52,30 +44,28 @@ export const AuthProvider = ({children}) => {
 
 
   const login = async (email, password) => {
-    const {data: resData} = await api.post('/authorization', {email, password})
-    let token = resData.data;
+    const token = await api.login(email, password)
     if (token) {
       Cookies.set('token', token, {expires: 60})
-      api.defaults.headers.Authorization = `Bearer ${token}`
-      const {data: user} = await api.get('/user')
-      setUser(user.data)
+      api.client.defaults.headers.Authorization = `Bearer ${token}`
+      const userData = await api.getUserInfo()
+      setUser(userData)
     }
   }
 
   const register = async (email, username, password) => {
-    const {data: resData} = await api.post('/user', {email, username, password})
-    const token = resData.data;
+    const token = await api.register(email, username, password)
     if (token) {
       Cookies.set('token', token, {expires: 60})
-      api.defaults.headers.Authorization = `Bearer ${token}`
-      const {data: user} = await api.get('/user')
-      setUser(user)
+      api.client.defaults.headers.Authorization = `Bearer ${token}`
+      const userData = await api.getUserInfo()
+      setUser(userData)
     }
   }
   const logout = () => {
     Cookies.remove('token')
     setUser(undefined)
-    delete api.defaults.headers.Authorization
+    delete api.client.defaults.headers.Authorization
     window.location.pathname = '/'
   }
 

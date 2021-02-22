@@ -14,7 +14,8 @@ export default function TransactionGroup({date, items}) {
         <th>id</th>
         <th>Date</th>
         <th>Payee . Narration</th>
-        <th></th>
+        <th>detail</th>
+        <th>action</th>
       </tr>
       </thead>
 

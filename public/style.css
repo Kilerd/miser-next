@@ -9,7 +9,7 @@ label.input {
     font-size: 1rem;
 }
 
-input {
+input, .input {
     border: 1px solid #D5D5DA;
     outline: none;
     padding: 0 1rem;
@@ -19,7 +19,7 @@ input {
     margin-bottom: 1.5rem;
 }
 
-input:focus {
+input:focus, .input:focus {
     border-color: #0072EF;
     color: #2E3033;
 }

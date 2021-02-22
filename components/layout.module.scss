@@ -1,0 +1,29 @@
+main.container {
+  max-width: 70rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav {
+  display: flex;
+
+
+}
+
+.nav a {
+  margin-right: 0.25rem;
+}
+
+
+.account_item {
+  .children {
+    margin-left: 2rem;
+
+  }
+}

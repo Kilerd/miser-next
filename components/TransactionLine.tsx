@@ -18,5 +18,6 @@ export default function TransactionLine({id, flag, narration, payee, create_time
     <td>{create_time}</td>
     <td>{flag} {payee} {narration}</td>
     <td>{outAccount} ¥{outAmount.mul(-1).toFixed(2)} {inAccount}</td>
+    <td><a>edit</a></td>
   </tr>)
 }

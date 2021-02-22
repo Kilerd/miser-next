@@ -5,6 +5,9 @@ import {useStore} from 'react-redux'
 import {AuthProvider} from "../contexts/auth";
 import {LedgerProvider} from "../contexts/ledger";
 import Head from "next/head";
+import Modal from 'react-modal'
+
+Modal.setAppElement("#__next")
 
 const WrappedApp: FC<AppProps> = ({Component, pageProps}) => {
   const store = useStore();

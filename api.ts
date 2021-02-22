@@ -1,19 +1,113 @@
-import Axios from 'axios'
+import Axios, {AxiosInstance} from 'axios'
+import dayjs from "dayjs";
 
 const urls = {
-    development: "http://localhost:8000",
-    production: "https://miser.3min.work/api"
+  development: "http://localhost:8000",
+  production: "https://miser.3min.work/api"
 }
 
-const api = Axios.create({
-    baseURL: urls[process.env.NODE_ENV],
-    headers: {
+
+class Api {
+
+  private currentLedgerId: string
+  client: AxiosInstance;
+
+  constructor(currentLdgerId: string) {
+    this.client = Axios.create({
+      baseURL: urls[process.env.NODE_ENV],
+      headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
+      }
+    })
+  }
+
+  setLedgerId(id: string) {
+    this.currentLedgerId = id;
+  }
+
+  async updateCommodity(id: number, name: string) {
+    // this.api.post
+  }
+
+  async newCommodity(name: string) {
+    const {data: res} = await this.client.post(`/ledgers/${this.currentLedgerId}/commodities`, {name})
+    return res.data;
+  }
+
+
+  async loadLedgers() {
+    const {data: res} = await this.client.get(`/ledgers`);
+    const data = res.data;
+    let ledger_map: { [id: string]: any } = {}
+    for (let it of data) {
+      ledger_map[it.id] = it;
     }
-})
-export const apiGetter = url => api.get(url).then(res => res.data);
-export const apiPoster = (url, data) => api.post(url, data).then(res => res.data);
+    return ledger_map;
+  }
+
+  async loadTransactions() {
+    const {data: trxRes} = await this.client.get(`/ledgers/${this.currentLedgerId}/journals`);
+    const raw_directives = trxRes.data;
+    let groupedTransactions: { [key: string]: any } = {}
+    for (let it of raw_directives) {
+      const date = dayjs(it.create_time).format('YYYY-MM-DD');
+      if (groupedTransactions[date] === undefined) {
+        groupedTransactions[date] = []
+      }
+      groupedTransactions[date].push(it)
+    }
+    return groupedTransactions;
+  }
+
+  async loadAccount() {
+    const {data: accountRes} = await this.client.get(`/ledgers/${this.currentLedgerId}/accounts`);
+    const accountsData = accountRes.data;
+    let accountMap: { [key: string]: any } = {}
+    for (let it of accountsData) {
+      accountMap[it.id] = it;
+    }
+    return accountMap;
+  }
+
+  async loadCommodities() {
+    const {data: res} = await this.client.get(`/ledgers/${this.currentLedgerId}/commodities`);
+    const data = res.data;
+    let commodities_map: { [name: string]: any } = {}
+    for (let it of data) {
+      commodities_map[it.name] = it;
+    }
+    return commodities_map
+  }
+
+  async getUserInfo() {
+    return (await this.client.get("/user")).data.data
+  }
+
+  async login(email, password) {
+    const res = await this.client.post('/authorization', {email, password});
+    return res.data.data;
+  }
+
+  async register(email, username, password) {
+    const res = await this.client.post('/user', {email, username, password})
+    return res.data.data;
+  }
+
+
+  async createTransaction(date: Date, payee: string, narration: string, tags: string[], links: string[], lines: any[]) {
+    return await this.client.post(`/ledgers/${this.currentLedgerId}/transactions`, {
+      date,
+      payee,
+      narration,
+      tags,
+      links,
+      lines
+    })
+  }
+}
+
+const api = new Api(null);
 
 export default api;
 
