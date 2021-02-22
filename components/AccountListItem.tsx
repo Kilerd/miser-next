@@ -11,7 +11,7 @@ export default function AccountListItem({name, fullName, isAvailable, alias, com
 
     <div className={styles.account_item}>
       <span>
-        {alias || name} ({name})
+        {alias} ({name})
       </span>
       <span>
         {commodities_map}

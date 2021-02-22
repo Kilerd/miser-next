@@ -1,11 +1,12 @@
 import {ProtectRoute, useAuth} from "../contexts/auth";
 import {connect} from 'react-redux'
 import {State} from "../store";
-import React from "react";
+import React, {useState} from "react";
 import AuthenticationLayout from "../components/authenticationLayout";
 import {userLedger} from "../contexts/ledger";
 import AccountListItem from "../components/AccountListItem";
 import {Account, AccountListItemType} from "../types";
+import NewAccountModal from "../components/NewAccountModal";
 
 
 export function accountTreeGenerator(value: { [id: number]: Account }) {
@@ -95,14 +96,17 @@ function Dashboard(state: State) {
 
   const {user} = useAuth();
   const ledgerContext = userLedger();
+  const [modalIsOpen, setIsOpen] = useState(false);
 
   const accountTreeGenerator1 = accountTreeGenerator(ledgerContext.accounts);
-  console.log(accountTreeGenerator1)
 
   const accounts = Object.values(accountTreeGenerator1).map(one => <AccountListItem key={one.fullName} {...one}/>)
   return (
     <AuthenticationLayout>
       <h1>Accounts</h1>
+
+      <NewAccountModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
+      <button onClick={() => setIsOpen(true)}>new</button>
       {accounts}
     </AuthenticationLayout>
   )

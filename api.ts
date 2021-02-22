@@ -105,6 +105,26 @@ class Api {
       lines
     })
   }
+
+  async newAccount(name: string, alias: string, selectedCommodityMap: string[], init: boolean, account: number, amount: string, commodity: string) {
+    const accountType = name.split(':')[0];
+    let data = {
+      account_type: accountType,
+      full_name: name,
+      alias: alias === '' ? null : alias,
+      commodities: selectedCommodityMap,
+      init: {
+        pad: account,
+        amount,
+        commodity
+      }
+    };
+
+    if (!init) {
+      data.init = null
+    }
+    return await this.client.post(`/ledgers/${this.currentLedgerId}/accounts`, data)
+  }
 }
 
 const api = new Api(null);
