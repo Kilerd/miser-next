@@ -39,6 +39,7 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
     }
   }
 
+  const canDeleteLine = lines.length > 2;
   const handleLineChange = (e, index, fieldId) => {
     const newLines = [...lines]
     newLines[index][fieldId] = e.target.value;
@@ -128,7 +129,10 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
               <option selected={one.commodity === candidate} value={candidate}>{candidate}</option>
             )}
           </select>
-          <button onClick={() => deleteLine(index)}>delete</button>
+          {canDeleteLine &&
+           <button onClick={() => deleteLine(index)}>delete</button>
+          }
+
         </div>
       )}
 
