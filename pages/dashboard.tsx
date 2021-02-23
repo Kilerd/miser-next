@@ -2,7 +2,7 @@ import {ProtectRoute, useAuth} from "../contexts/auth";
 import {connect} from 'react-redux'
 import {State} from "../store";
 import React from "react";
-import AuthenticationLayout from "../components/authenticationLayout";
+import AuthenticationLayout from "../components/AuthenticationLayout";
 
 
 function Dashboard(state: State) {

@@ -5,7 +5,7 @@ import {userLedger} from "../contexts/ledger";
 export default function TransactionLine({id, flag, narration, payee, create_time, lines}) {
 
   const {getAccountAlias} = userLedger();
-
+  // todo multiple commodities
   const outAccounts = lines.filter(value => new Big(value.cost[0]).s === -1).map(value => value.account);
   const inAccounts = lines.filter(value => new Big(value.cost[0]).s === 1).map(value => value.account);
 

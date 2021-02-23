@@ -4,7 +4,7 @@ import {State, stateWrapper} from "../store";
 import React, {useState} from "react";
 import {userLedger} from "../contexts/ledger";
 import TransactionGroup from "../components/TransactionGroup";
-import AuthenticationLayout from "../components/authenticationLayout";
+import AuthenticationLayout from "../components/AuthenticationLayout";
 import NewCommodityModal from "../components/NewCommodityModal";
 import NewTransactionModal from "../components/NewTransactionModal";
 
@@ -28,7 +28,7 @@ function Transactions(state: State) {
     <AuthenticationLayout>
       <h1>Transactions for ledger {ledger_id}</h1>
       <NewTransactionModal modalStatus={newTrxStatus} setModalStatus={setNewTrxStatus}/>
-      <button onClick={() => setNewTrxStatus(true)}> new</button>
+      <button onClick={() => setNewTrxStatus(true)} className="button"> new</button>
       {transactionGroups}
     </AuthenticationLayout>
 

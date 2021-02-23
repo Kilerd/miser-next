@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import {useAuth} from "../contexts/auth";
 import Login from "../components/login";
 import {useRouter} from "next/router";
@@ -59,7 +58,7 @@ export default function Home() {
           justify-content: space-between;
         }
         h1 {
-          isplay: inline-block;
+          display: inline-block;
           font-size: 2.5rem;
           font-weight: 600;
           min-height: 1.4em;

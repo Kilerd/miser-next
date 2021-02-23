@@ -79,12 +79,10 @@ export default function NewAccountModal({modalStatus, setModalStatus}) {
       <div>
         {
           Object.keys(commodityMap).map(commodity => (
-            <>
-              <label onClick={() => handleCommodityClick(commodity)} htmlFor={`commodity-${commodity}`}>
-                <input type="checkbox" checked={commodityMap[commodity]} className="input" id="commodity-{commodity}"/>
-                {commodity}
-              </label>
-            </>
+            <label key={commodity} onClick={() => handleCommodityClick(commodity)} htmlFor={`commodity-${commodity}`}>
+              <input type="checkbox" checked={commodityMap[commodity]} className="input" id="commodity-{commodity}"/>
+              {commodity}
+            </label>
           ))
         }
       </div>

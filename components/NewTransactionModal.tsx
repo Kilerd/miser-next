@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import Modal from 'react-modal'
 import api from "../api";
 import {userLedger} from "../contexts/ledger";
+import Big from 'big.js'
 
 export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const ledgerContext = userLedger();
@@ -18,8 +19,8 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const [newTag, setNewTag] = useState("");
   const [tags, setTags] = useState([]);
   const [lines, setLines] = useState([
-    {account: null, amount: null, commodity: null, commodity_candidates: []},
-    {account: null, amount: null, commodity: null, commodity_candidates: []}
+    {account: "", amount: "", commodity: null, commodity_candidates: []},
+    {account: "", amount: "", commodity: null, commodity_candidates: []}
   ])
 
 
@@ -48,19 +49,19 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const newLine = () => {
     setLines([
       ...lines,
-      {account: null, amount: null, commodity: null, commodity_candidates: []}
+      {account: "", amount: "", commodity: null, commodity_candidates: []}
     ])
   }
   const deleteLine = (target_index) => {
     setLines(lines.filter((value, index) => index != target_index));
   }
 
-  const accountOptions = Object.values(ledgerContext.accounts).map(one => <option
-    value={one.id}>{one.alias} ({one.full_name})</option>)
+  const accountOptions = Object.values(ledgerContext.accounts).map(one =>
+    <option key={one.id} value={one.id}>{one.alias} ({one.full_name})</option>)
 
   function handleAccountChange(e: React.ChangeEvent<HTMLSelectElement>, index: number) {
     const newLines = [...lines]
-    newLines[index].account = parseInt(e.target.value);
+    newLines[index].account = e.target.value;
     let commodityCandidates = ledgerContext.accounts[e.target.value]?.commodities || [];
     newLines[index].commodity_candidates = commodityCandidates;
     newLines[index].commodity = commodityCandidates.length > 0 ? commodityCandidates[0] : null;
@@ -71,7 +72,7 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const submit = async () => {
     setLoading(true);
     const lineReq = lines.map(line => ({
-      account: line.account,
+      account: parseInt(line.account),
       amount: [line.amount, line.commodity],
       description: ""
     }));
@@ -81,6 +82,14 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
     ledgerContext.update("TRANSACTIONS")
   }
 
+
+  function handleSimpleModeAmountInput(e: React.ChangeEvent<HTMLInputElement>) {
+    let big = new Big(e.target.value);
+    let negative = big.mul(-1);
+    lines[0].amount = negative.toFixed();
+    lines[1].amount = big.toFixed();
+    setLines([...lines]);
+  }
 
   return (
     <Modal
@@ -113,28 +122,66 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
                onChange={e => setNewTag(e.target.value)} onKeyUp={handleNewTag}/>
       </div>
 
-      <h3>Lines</h3>
-      <button onClick={newLine}>new Lines</button>
-      {lines.map((one, index) =>
-        <div>
-          <select name="select" id="exampleSelect" className="input" onChange={e => handleAccountChange(e, index)}>
-            {accountOptions}
-          </select>
-          <input type="number" placeholder="Amount" className="input" value={one.amount}
-                 onChange={e => handleLineChange(e, index, "amount")}/>
+      <label htmlFor="enhancedMode">
+        <input id="enhancedMode" type="checkbox" checked={simpleMode} onChange={() => setSimpleMode(!simpleMode)}
+               disabled={lines.length != 2}/>
+        enhanced mode
+      </label>
+      {simpleMode ? (
+          <div>
+            <div>
+              <select name="select" id="exampleSelect" defaultValue={lines[0].account} className="input"
+                      onChange={e => handleAccountChange(e, 0)}>
+                {accountOptions}
+              </select>
+              <select name="select" id="exampleSelect" defaultValue={lines[1].account} className="input"
+                      onChange={e => handleAccountChange(e, 1)}>
+                {accountOptions}
+              </select>
+            </div>
+            <div>
+              <input type="number" placeholder="Amount" className="input" value={lines[1].amount}
+                     onChange={e => handleSimpleModeAmountInput(e)}/>
 
-          <select name="select" id="exampleSelect"
-                  className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150">
-            {one.commodity_candidates.map(candidate =>
-              <option selected={one.commodity === candidate} value={candidate}>{candidate}</option>
-            )}
-          </select>
-          {canDeleteLine &&
-           <button onClick={() => deleteLine(index)}>delete</button>
-          }
+              <select name="select" id="exampleSelect"
+                      defaultValue={lines[0].commodity} onChange={(e) => {
+                handleLineChange(e, 0, 'commodity');
+                handleLineChange(e, 1, 'commodity');
+              }}>
+                {lines[0].commodity_candidates.filter(it => lines[1].commodity_candidates.indexOf(it) !== -1).map(candidate =>
+                  <option key={`${candidate}`} value={candidate}>{candidate}</option>
+                )}
+              </select>
+            </div>
+          </div>
+        ) :
+        <>
+          <h3>Lines</h3>
+          <button onClick={newLine}>new Lines</button>
+          {lines.map((one, index) =>
+            <div key={index}>
+              <select name="select" id="exampleSelect" defaultValue={one.account} className="input"
+                      onChange={e => handleAccountChange(e, index)}>
+                {accountOptions}
+              </select>
+              <input type="number" placeholder="Amount" className="input" value={one.amount}
+                     onChange={e => handleLineChange(e, index, "amount")}/>
 
-        </div>
-      )}
+              <select name="select" id="exampleSelect"
+                      defaultValue={one.commodity} onChange={(e) => handleLineChange(e, index, 'commodity')}>
+                {one.commodity_candidates.map(candidate =>
+                  <option key={`${index}-${candidate}`} value={candidate}>{candidate}</option>
+                )}
+              </select>
+              {canDeleteLine &&
+              <button onClick={() => deleteLine(index)}>delete</button>
+              }
+
+            </div>
+          )}
+        </>
+      }
+
 
       <button disabled={!canBeSubmit} onClick={submit}> create</button>
     </Modal>

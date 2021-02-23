@@ -2,7 +2,7 @@ import {ProtectRoute} from "../contexts/auth";
 import {connect} from 'react-redux'
 import {State} from "../store";
 import React, {useState} from "react";
-import AuthenticationLayout from "../components/authenticationLayout";
+import AuthenticationLayout from "../components/AuthenticationLayout";
 import {userLedger} from "../contexts/ledger";
 import NewCommodityModal from "../components/NewCommodityModal";
 
@@ -19,7 +19,7 @@ function Commodities(state: State) {
     <AuthenticationLayout>
       <h1>Commodities</h1>
       <NewCommodityModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
-      <button onClick={() => setIsOpen(true)}> new</button>
+      <button onClick={() => setIsOpen(true)} className="button"> new</button>
       {commoditiesDOM}
     </AuthenticationLayout>
   )

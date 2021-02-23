@@ -1,12 +1,11 @@
 import {ProtectRoute, useAuth} from "../contexts/auth";
-import {connect} from 'react-redux'
-import {State} from "../store";
 import React, {useState} from "react";
-import AuthenticationLayout from "../components/authenticationLayout";
+import AuthenticationLayout from "../components/AuthenticationLayout";
 import {userLedger} from "../contexts/ledger";
 import AccountListItem from "../components/AccountListItem";
 import {Account, AccountListItemType} from "../types";
 import NewAccountModal from "../components/NewAccountModal";
+import EditAccountModal from "../components/EditAccountModal";
 
 
 export function accountTreeGenerator(value: { [id: number]: Account }) {
@@ -92,25 +91,38 @@ export function accountTreeGenerator(value: { [id: number]: Account }) {
 }
 
 
-function Dashboard(state: State) {
+function Accounts() {
 
   const {user} = useAuth();
   const ledgerContext = userLedger();
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const accountTreeGenerator1 = accountTreeGenerator(ledgerContext.accounts);
+  const [editAccountData, setEditAccountData] = useState({id: null, name: "", alias: "", commodities: []});
+  const [editAccountModalStatus, setEditAccountModalStatus] = useState(false);
+  const openEditAccount = (id, name, alias, commodities) => {
+    console.log(id, name, alias, commodities);
+    setEditAccountData({id, name, alias, commodities});
+    setEditAccountModalStatus(true);
+  }
 
-  const accounts = Object.values(accountTreeGenerator1).map(one => <AccountListItem key={one.fullName} {...one}/>)
+
+  const accountTreeGenerator1 = accountTreeGenerator(ledgerContext.accounts);
+  console.log(accountTreeGenerator1);
   return (
     <AuthenticationLayout>
       <h1>Accounts</h1>
 
       <NewAccountModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
-      <button onClick={() => setIsOpen(true)}>new</button>
-      {accounts}
+      <EditAccountModal {...editAccountData} modalStatus={editAccountModalStatus}
+                        setModalStatus={setEditAccountModalStatus}/>
+      <button onClick={() => setIsOpen(true)} className="button">new</button>
+      {Object.values(accountTreeGenerator1).map(one =>
+
+        <AccountListItem key={one.fullName} {...one} openEditAccount={openEditAccount}/>
+      )}
     </AuthenticationLayout>
   )
 }
 
 
-export default connect(state => state)(ProtectRoute(Dashboard))
+export default ProtectRoute(Accounts)

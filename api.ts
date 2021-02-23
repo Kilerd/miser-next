@@ -119,11 +119,18 @@ class Api {
         commodity
       }
     };
-
     if (!init) {
       data.init = null
     }
     return await this.client.post(`/ledgers/${this.currentLedgerId}/accounts`, data)
+  }
+  async updateAccount(id: number, name: string, alias: string, commodities: string[]) {
+    return await this.client.put(`/ledgers/${this.currentLedgerId}/accounts/${id}`, {
+      account_type:"Expenses",
+      full_name: name,
+      alias,
+      commodities
+    })
   }
 }
 
