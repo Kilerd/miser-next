@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "big.js": "^6.0.3",
+    "classnames": "^2.2.6",
     "dayjs": "^1.10.4",
     "js-cookie": "^2.2.1",
     "next": "^10.0.0",

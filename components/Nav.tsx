@@ -7,10 +7,10 @@ export default function Nav() {
   const {user} = useAuth();
   return (
     <>
-      <header className={styles.header}>
+      <header>
         <div className="container">
           <h1 className="logo">Miser</h1>
-          <nav className={styles.nav}>
+          <nav className="nav">
             <Link href="/dashboard"><a className="link">DashBoard</a></Link>
             <Link href="/transactions"><a>Transactions</a></Link>
             <Link href="/accounts"><a>Accounts</a></Link>
@@ -21,6 +21,11 @@ export default function Nav() {
       </header>
       <style jsx>{`
         header {
+        padding: 10px 0;
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
         .container {
           display: flex;
           align-items: center;

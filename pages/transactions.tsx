@@ -19,18 +19,31 @@ function Transactions(state: State) {
 
   const [newTrxStatus, setNewTrxStatus] = useState(false);
 
-  const transactionGroups = Object.entries(transactions).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()).reverse().map(item => {
-    const [date, trxs] = item;
-    return <TransactionGroup key={date} date={date} items={trxs}/>
-  })
 
   return (
-    <AuthenticationLayout>
-      <h1>Transactions for ledger {ledger_id}</h1>
-      <NewTransactionModal modalStatus={newTrxStatus} setModalStatus={setNewTrxStatus}/>
-      <button onClick={() => setNewTrxStatus(true)} className="button"> new</button>
-      {transactionGroups}
-    </AuthenticationLayout>
+    <>
+      <AuthenticationLayout>
+        <div className="container">
+          <h1>Transactions for ledger {ledger_id}</h1>
+          <NewTransactionModal modalStatus={newTrxStatus} setModalStatus={setNewTrxStatus}/>
+          <button onClick={() => setNewTrxStatus(true)} className="button"> new</button>
+
+          {Object.entries(transactions).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()).reverse().map(item => {
+            const [date, trxs] = item;
+            return <TransactionGroup key={date} date={date} items={trxs}/>
+          })}
+        </div>
+      </AuthenticationLayout>
+
+      <style jsx>{`
+        .container {
+          
+          max-width: 85%;
+          margin: 0 auto;
+        
+        }
+      `}</style>
+    </>
 
   )
 }

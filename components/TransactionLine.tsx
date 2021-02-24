@@ -1,8 +1,9 @@
 import React from "react";
 import Big from 'big.js'
 import {userLedger} from "../contexts/ledger";
+import classNames from "classnames";
 
-export default function TransactionLine({id, flag, narration, payee, create_time, lines}) {
+export default function TransactionLine({id, flag, narration, payee, create_time, lines, is_balance}) {
 
   const {getAccountAlias} = userLedger();
   // todo multiple commodities
@@ -13,11 +14,69 @@ export default function TransactionLine({id, flag, narration, payee, create_time
   const inAccount = inAccounts.length !== 1 ? `${inAccounts.length} Accounts` : getAccountAlias(inAccounts[0])
   const outAmount = lines.filter(value => new Big(value.cost[0]).s === -1).map(value => value.cost[0]).reduce((sum, cur) => sum.add(cur), new Big(0));
 
-  return (<tr>
-    <td>{id}</td>
-    <td>{create_time}</td>
-    <td>{flag} {payee} {narration}</td>
-    <td>{outAccount} ¥{outAmount.mul(-1).toFixed(2)} {inAccount}</td>
-    <td><a>edit</a></td>
-  </tr>)
+  const s = new Date(create_time).toDateString();
+  return (
+
+    <>
+      <div className={classNames("line", {
+        error: flag !== "Complete",
+        notBalance: !is_balance,
+      })}>
+        <div className="left">
+          <div className="info">{payee} {narration}</div>
+          <div className="time">{s}</div>
+        </div>
+        <div className="right">
+          <div className="amount">¥{outAmount.mul(-1).toFixed(2)}</div>
+          <div className="orientation">{outAccount} -{">"} {inAccount}</div>
+        </div>
+      </div>
+      <style jsx>{`
+        .line {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.5rem 0.75rem;
+          border-left: 1px solid rgb(213, 213, 218);
+          border-right: 1px solid rgb(213, 213, 218);
+          border-bottom: 1px solid rgb(213, 213, 218);
+          :first-child {
+            border-top: 1px solid rgb(213, 213, 218);
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+          }
+          :last-child{
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+          .left {
+            display: flex;
+            flex-direction: column;
+            
+            .info {
+              font-size: 1.15rem;
+            }
+            .time {
+              font-size: 0.85rem;
+            }
+          }
+          
+          .right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            .amount {
+              font-size: 1.25rem;
+            }
+            .orientation {
+              font-size: 0.85rem;
+            }
+          }
+        }
+        .notBalance {
+          border-left: 3px solid red;
+        }
+      `}</style>
+    </>
+  )
 }

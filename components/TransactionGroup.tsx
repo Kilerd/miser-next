@@ -5,23 +5,28 @@ import TransactionLine from "./TransactionLine";
 export default function TransactionGroup({date, items}) {
 
   const lines = items.map((one) => (<TransactionLine key={one.id} {...one} />))
-  return <div>
-    <h2>{date}</h2>
+  return (
+    <>
+      <div className="group">
+        <div className="head">
+          <h2>{date}</h2>
+        </div>
+        <div className="lines">
+          {lines}
+        </div>
 
-    <table style={{width: "100%"}}>
-      <thead>
-      <tr>
-        <th>id</th>
-        <th>Date</th>
-        <th>Payee . Narration</th>
-        <th>detail</th>
-        <th>action</th>
-      </tr>
-      </thead>
+      </div>
 
-      <tbody>
-      {lines}
-      </tbody>
-    </table>
-  </div>
+      <style jsx>{`
+        .group {
+          display:flex;
+          flex-direction: column;
+          margin-bottom:1rem;
+          .lines {
+          color: #2E3033;
+          }
+        }
+      `}</style>
+    </>
+  )
 }
