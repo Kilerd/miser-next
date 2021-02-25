@@ -109,18 +109,28 @@ function Accounts() {
   const accountTreeGenerator1 = accountTreeGenerator(ledgerContext.accounts);
   console.log(accountTreeGenerator1);
   return (
-    <AuthenticationLayout>
-      <h1>Accounts</h1>
+    <>
+      <AuthenticationLayout>
+        <div className="container">
+          <h1>Accounts</h1>
+          <NewAccountModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
+          <EditAccountModal {...editAccountData} modalStatus={editAccountModalStatus}
+                            setModalStatus={setEditAccountModalStatus}/>
+          <button onClick={() => setIsOpen(true)} className="button">new</button>
+          {Object.values(accountTreeGenerator1).map(one =>
 
-      <NewAccountModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
-      <EditAccountModal {...editAccountData} modalStatus={editAccountModalStatus}
-                        setModalStatus={setEditAccountModalStatus}/>
-      <button onClick={() => setIsOpen(true)} className="button">new</button>
-      {Object.values(accountTreeGenerator1).map(one =>
+            <AccountListItem key={one.fullName} {...one} openEditAccount={openEditAccount}/>
+          )}
+        </div>
+      </AuthenticationLayout>
 
-        <AccountListItem key={one.fullName} {...one} openEditAccount={openEditAccount}/>
-      )}
-    </AuthenticationLayout>
+      <style jsx>{`
+        .container {
+          max-width: 85%;
+          margin: 0 auto;
+        }
+      `}</style>
+    </>
   )
 }
 
