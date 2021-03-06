@@ -2,7 +2,8 @@ import React, {useState} from "react";
 import Modal from 'react-modal'
 import api from "../api";
 import {userLedger} from "../contexts/ledger";
-import Big from 'big.js'
+import Big from 'big.js';
+import Select from 'react-select';
 
 export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const ledgerContext = userLedger();
@@ -19,8 +20,8 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const [newTag, setNewTag] = useState("");
   const [tags, setTags] = useState([]);
   const [lines, setLines] = useState([
-    {account: "", amount: "", commodity: null, commodity_candidates: []},
-    {account: "", amount: "", commodity: null, commodity_candidates: []}
+    {account: null, amount: "", commodity: null, commodity_candidates: []},
+    {account: null, amount: "", commodity: null, commodity_candidates: []}
   ])
 
 
@@ -49,20 +50,28 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const newLine = () => {
     setLines([
       ...lines,
-      {account: "", amount: "", commodity: null, commodity_candidates: []}
+      {account: null, amount: "", commodity: null, commodity_candidates: []}
     ])
   }
   const deleteLine = (target_index) => {
     setLines(lines.filter((value, index) => index != target_index));
   }
 
-  const accountOptions = Object.values(ledgerContext.accounts).map(one =>
-    <option key={one.id} value={one.id}>{one.alias} ({one.full_name})</option>)
+  const accountOptions = Object.values(Object.values(ledgerContext.accounts)
+    .reduce((ret, it) => {
+      const type = it.full_name.split(":")[0];
+      const item = {label: it.full_name, value: it.id};
+      ret[type] = ret[type] || {label: type.toUpperCase(), options: []}
+      ret[type].options.push(item);
+      return ret;
+    }, {})).sort()
 
-  function handleAccountChange(e: React.ChangeEvent<HTMLSelectElement>, index: number) {
+
+  function handleAccountChange(e: any, index: number) {
+    const selectAccountId = e.value;
     const newLines = [...lines]
-    newLines[index].account = e.target.value;
-    let commodityCandidates = ledgerContext.accounts[e.target.value]?.commodities || [];
+    newLines[index].account = e;
+    let commodityCandidates = ledgerContext.accounts[selectAccountId]?.commodities || [];
     newLines[index].commodity_candidates = commodityCandidates;
     newLines[index].commodity = commodityCandidates.length > 0 ? commodityCandidates[0] : null;
     setLines(newLines);
@@ -72,7 +81,7 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
   const submit = async () => {
     setLoading(true);
     const lineReq = lines.map(line => ({
-      account: parseInt(line.account),
+      account: parseInt(line.account.value),
       amount: [line.amount, line.commodity],
       description: ""
     }));
@@ -130,14 +139,18 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
       {simpleMode ? (
           <div>
             <div>
-              <select name="select" id="exampleSelect" defaultValue={lines[0].account} className="input"
-                      onChange={e => handleAccountChange(e, 0)}>
-                {accountOptions}
-              </select>
-              <select name="select" id="exampleSelect" defaultValue={lines[1].account} className="input"
-                      onChange={e => handleAccountChange(e, 1)}>
-                {accountOptions}
-              </select>
+              <Select
+                defaultValue={lines[0].account}
+                options={accountOptions}
+                onChange={(inputValue, actionMeta) => handleAccountChange(inputValue, 0)}
+              />
+              <Select
+                defaultValue={lines[1].account}
+                options={accountOptions}
+                onChange={(inputValue, actionMeta) => handleAccountChange(inputValue, 1)}
+
+              />
+
             </div>
             <div>
               <input type="number" placeholder="Amount" className="input" value={lines[1].amount}
@@ -160,10 +173,12 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
           <button onClick={newLine}>new Lines</button>
           {lines.map((one, index) =>
             <div key={index}>
-              <select name="select" id="exampleSelect" defaultValue={one.account} className="input"
-                      onChange={e => handleAccountChange(e, index)}>
-                {accountOptions}
-              </select>
+
+              <Select
+                defaultValue={one.account}
+                options={accountOptions}
+                onChange={(inputValue, actionMeta) => handleAccountChange(inputValue, index)}
+              />
               <input type="number" placeholder="Amount" className="input" value={one.amount}
                      onChange={e => handleLineChange(e, index, "amount")}/>
 
