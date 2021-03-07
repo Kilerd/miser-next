@@ -16,14 +16,9 @@ interface NameMap<DATA> {
 }
 
 
-interface TransactionMap {
-  [date: string]: any[]
-}
-
-
 interface LedgerContext {
   ledger_id: string | undefined,
-  transactions: TransactionMap,
+  transactions: IdMap<any>,
   ledgers: IdMap<any>,
   accounts: IdMap<Account>,
   commodities: NameMap<Commodity>

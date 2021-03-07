@@ -48,16 +48,13 @@ class Api {
 
   async loadTransactions() {
     const {data: trxRes} = await this.client.get(`/ledgers/${this.currentLedgerId}/journals`);
-    const raw_directives = trxRes.data;
-    let groupedTransactions: { [key: string]: any } = {}
-    for (let it of raw_directives) {
-      const date = dayjs(it.create_time).format('YYYY-MM-DD');
-      if (groupedTransactions[date] === undefined) {
-        groupedTransactions[date] = []
-      }
-      groupedTransactions[date].push(it)
+    const transactions = trxRes.data;
+
+    let trxMap: {[id: number]: any} = {}
+    for (let transaction of transactions) {
+      trxMap[transaction.id] = transaction;
     }
-    return groupedTransactions;
+    return trxMap;
   }
 
   async loadAccount() {
@@ -97,6 +94,16 @@ class Api {
 
   async createTransaction(date: Date, payee: string, narration: string, tags: string[], links: string[], lines: any[]) {
     return await this.client.post(`/ledgers/${this.currentLedgerId}/transactions`, {
+      date,
+      payee,
+      narration,
+      tags,
+      links,
+      lines
+    })
+  }
+  async updateTransaction(id: number, date: Date, payee: string, narration: string, tags: string[], links: string[], lines: any[]) {
+    return await this.client.put(`/ledgers/${this.currentLedgerId}/transactions/${id}`, {
       date,
       payee,
       narration,

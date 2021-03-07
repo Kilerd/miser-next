@@ -7,6 +7,8 @@ import TransactionGroup from "../components/TransactionGroup";
 import AuthenticationLayout from "../components/AuthenticationLayout";
 import NewCommodityModal from "../components/NewCommodityModal";
 import NewTransactionModal from "../components/NewTransactionModal";
+import EditTransactionModal from "../components/EditTransactionModal";
+import dayjs from "dayjs";
 
 export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, res, ...etc}) => {
   // console.log('2. Page.getServerSideProps uses the store to dispatch things');
@@ -17,8 +19,21 @@ export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, 
 function Transactions(state: State) {
   const {ledger_id, transactions} = userLedger();
 
+
+  let groupedTransactions: { [key: string]: any } = {}
+  for (let it of Object.values(transactions)) {
+    const date = dayjs(it.create_time).format('YYYY-MM-DD');
+    if (groupedTransactions[date] === undefined) {
+      groupedTransactions[date] = []
+    }
+    groupedTransactions[date].push(it)
+  }
+
   const [newTrxStatus, setNewTrxStatus] = useState(false);
 
+  const [editId, setEditId] = useState(null);
+  const [editTrxStatus, setEditTrxStatus] = useState(false);
+  const openEditTrxModal = (id) => {setEditId(id); setEditTrxStatus(true)};
 
   return (
     <>
@@ -26,11 +41,13 @@ function Transactions(state: State) {
         <div className="container">
           <h1>Transactions for ledger {ledger_id}</h1>
           <NewTransactionModal modalStatus={newTrxStatus} setModalStatus={setNewTrxStatus}/>
+          <EditTransactionModal editId={editId} modalStatus={editTrxStatus} setModalStatus={setEditTrxStatus}/>
+
           <button onClick={() => setNewTrxStatus(true)} className="button"> new</button>
 
-          {Object.entries(transactions).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()).reverse().map(item => {
+          {Object.entries(groupedTransactions).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()).reverse().map(item => {
             const [date, trxs] = item;
-            return <TransactionGroup key={date} date={date} items={trxs}/>
+            return <TransactionGroup key={date} date={date} items={trxs} setEditId={openEditTrxModal}/>
           })}
         </div>
       </AuthenticationLayout>

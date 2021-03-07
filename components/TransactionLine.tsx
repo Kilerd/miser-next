@@ -2,10 +2,13 @@ import React from "react";
 import Big from 'big.js'
 import {userLedger} from "../contexts/ledger";
 import classNames from "classnames";
+import dayjs from 'dayjs'
 
-export default function TransactionLine({id, flag, narration, payee, create_time, lines, is_balance}) {
+export default function TransactionLine({id, flag, narration, payee, create_time, lines, is_balance, setEditId}) {
 
   const {getAccountAlias} = userLedger();
+
+
   // todo multiple commodities
   const outAccounts = lines.filter(value => new Big(value.cost[0]).s === -1).map(value => value.account);
   const inAccounts = lines.filter(value => new Big(value.cost[0]).s === 1).map(value => value.account);
@@ -14,7 +17,7 @@ export default function TransactionLine({id, flag, narration, payee, create_time
   const inAccount = inAccounts.length !== 1 ? `${inAccounts.length} Accounts` : getAccountAlias(inAccounts[0])
   const outAmount = lines.filter(value => new Big(value.cost[0]).s === -1).map(value => value.cost[0]).reduce((sum, cur) => sum.add(cur), new Big(0));
 
-  const s = new Date(create_time).toDateString();
+  const s = dayjs(create_time).format("HH:mm");
   return (
 
     <>
@@ -23,13 +26,18 @@ export default function TransactionLine({id, flag, narration, payee, create_time
         notBalance: !is_balance,
       })}>
         <div className="left">
-          <div className="info">{payee} {narration}</div>
+          <div className="info"><span>{payee}</span> {narration}</div>
           <div className="time">{s}</div>
         </div>
         <div className="right">
-          <div className="amount">¥{outAmount.mul(-1).toFixed(2)}</div>
-          <div className="orientation">{outAccount} -{">"} {inAccount}</div>
-        </div>
+          <div className="info">
+            <div className="amount">¥{outAmount.mul(-1).toFixed(2)}</div>
+            <div className="orientation">{outAccount} -{">"} {inAccount}</div>
+          </div>
+          <div className="operation">
+            <a onClick={() => setEditId(id)}>edit</a>
+          </div>
+          </div>
       </div>
       <style jsx>{`
         .line {
@@ -40,39 +48,53 @@ export default function TransactionLine({id, flag, narration, payee, create_time
           border-left: 1px solid rgb(213, 213, 218);
           border-right: 1px solid rgb(213, 213, 218);
           border-bottom: 1px solid rgb(213, 213, 218);
+
           :first-child {
             border-top: 1px solid rgb(213, 213, 218);
             border-top-left-radius: 3px;
             border-top-right-radius: 3px;
           }
-          :last-child{
+
+          :last-child {
             border-bottom-left-radius: 3px;
             border-bottom-right-radius: 3px;
           }
+
           .left {
             display: flex;
             flex-direction: column;
-            
+
             .info {
-              font-size: 1.15rem;
+              font-size: 1.1rem;
+
+              span {
+                font-weight: 500;
+              }
             }
+
             .time {
               font-size: 0.85rem;
+              color: #b1b1b1;
             }
           }
-          
+
           .right {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            .amount {
-              font-size: 1.25rem;
-            }
-            .orientation {
-              font-size: 0.85rem;
+            .info{
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+              .amount {
+                font-size: 1.25rem;
+              }
+  
+              .orientation {
+                font-size: 0.85rem;
+              }
             }
           }
         }
+
         .notBalance {
           border-left: 3px solid red;
         }

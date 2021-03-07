@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Modal from 'react-modal'
 import api from "../api";
 import {userLedger} from "../contexts/ledger";
@@ -6,7 +6,7 @@ import Big from 'big.js';
 import Select from 'react-select';
 import dayjs from "dayjs";
 
-export default function NewTransactionModal({modalStatus, setModalStatus}) {
+export default function EditTransactionModal({editId, modalStatus, setModalStatus}) {
   const ledgerContext = userLedger();
 
   const [simpleMode, setSimpleMode] = useState(true);
@@ -23,6 +23,27 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
     {account: null, amount: "", commodity: null, commodity_candidates: []}
   ])
 
+
+  useEffect(() => {
+    const transaction = ledgerContext.transactions[editId];
+    console.log(transaction);
+    if (transaction !== undefined) {
+      setDate(dayjs(transaction.create_time).format("YYYY-MM-DDTHH:mm"));
+      setPayee(transaction.payee);
+      setNarration(transaction.narration);
+      setTags(transaction.tags);
+      setLines(transaction.lines.map(it => {
+        const targetAccount = ledgerContext.accounts[it.account];
+
+        return {
+          account: {label: targetAccount.full_name, value: targetAccount.id},
+          amount: it.cost[0],
+          commodity: it.cost[0],
+          commodity_candidates: targetAccount.commodities
+        }
+      }))
+    }
+  }, [editId])
 
   const [isLoading, setLoading] = useState(false);
   const canBeSubmit = !isLoading;
@@ -84,7 +105,7 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
       amount: [line.amount, line.commodity],
       description: ""
     }));
-    await api.createTransaction(new Date(date), payee, narration, tags, [], lineReq)
+    await api.updateTransaction(editId, new Date(date), payee, narration, tags, [], lineReq)
     setLoading(false);
     setModalStatus(false);
     ledgerContext.update("TRANSACTIONS")
