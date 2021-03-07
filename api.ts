@@ -112,6 +112,9 @@ class Api {
       lines
     })
   }
+  async deleteTransaction(id: number) {
+    return await this.client.delete(`/ledgers/${this.currentLedgerId}/transactions/${id}`)
+  }
 
   async newAccount(name: string, alias: string, selectedCommodityMap: string[], init: boolean, account: number, amount: string, commodity: string) {
     const accountType = name.split(':')[0];

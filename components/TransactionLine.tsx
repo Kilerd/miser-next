@@ -3,10 +3,11 @@ import Big from 'big.js'
 import {userLedger} from "../contexts/ledger";
 import classNames from "classnames";
 import dayjs from 'dayjs'
+import api from "../api";
 
 export default function TransactionLine({id, flag, narration, payee, create_time, lines, is_balance, setEditId}) {
 
-  const {getAccountAlias} = userLedger();
+  const {getAccountAlias, update} = userLedger();
 
 
   // todo multiple commodities
@@ -18,6 +19,13 @@ export default function TransactionLine({id, flag, narration, payee, create_time
   const outAmount = lines.filter(value => new Big(value.cost[0]).s === -1).map(value => value.cost[0]).reduce((sum, cur) => sum.add(cur), new Big(0));
 
   const s = dayjs(create_time).format("HH:mm");
+
+  const deleteTrx = async (id) => {
+    // setLoading(true);
+    await api.deleteTransaction(id)
+    // setLoading(false);
+    update("TRANSACTIONS")
+  }
   return (
 
     <>
@@ -36,6 +44,7 @@ export default function TransactionLine({id, flag, narration, payee, create_time
           </div>
           <div className="operation">
             <a onClick={() => setEditId(id)}>edit</a>
+            <a onClick={() => deleteTrx(id)}>delete</a>
           </div>
           </div>
       </div>
