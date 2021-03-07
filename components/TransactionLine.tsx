@@ -74,7 +74,7 @@ export default function TransactionLine({id, flag, narration, payee, create_time
             flex-direction: column;
 
             .info {
-              font-size: 1.1rem;
+              font-size: 1rem;
 
               span {
                 font-weight: 500;
