@@ -132,7 +132,7 @@ export default function NewTransactionModal({modalStatus, setModalStatus}) {
       </div>
 
       <label htmlFor="enhancedMode">
-        <input id="enhancedMode" type="checkbox" checked={simpleMode} onChange={() => setSimpleMode(!simpleMode)}
+        <input id="enhancedMode" type="checkbox" checked={!simpleMode} onChange={() => setSimpleMode(!simpleMode)}
                disabled={lines.length != 2}/>
         enhanced mode
       </label>
