@@ -17,7 +17,7 @@ function SingleTransactionPage() {
         <AuthenticationLayout>
             <div className="container">
                 hello single transaction {id}
-                <h1>#{id} </h1>
+                <h1>#{targetTransaction.id} {targetTransaction.payee} {targetTransaction.narration} </h1>
             </div>
 
         </AuthenticationLayout>
