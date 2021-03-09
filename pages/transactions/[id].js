@@ -10,10 +10,16 @@ function SingleTransactionPage() {
     const targetTransaction = ledgerContext.transactions[id];
     console.log("target transaction", targetTransaction);
     if (targetTransaction === undefined) {
+        router.push("/error");
+        return <></>
     }
     return (
         <AuthenticationLayout>
-            hello single transaction {id}
+            <div className="container">
+                hello single transaction {id}
+                <h1>#{id} </h1>
+            </div>
+
         </AuthenticationLayout>
     )
 }

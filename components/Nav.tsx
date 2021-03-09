@@ -8,7 +8,9 @@ export default function Nav() {
   const ledgerContext = useLedger();
 
   const ledgerChange = (e) => {
-    ledgerContext.changeLedgerId(e.target.value)
+    if (e.target.value !== undefined) {
+      ledgerContext.changeLedgerId(e.target.value)
+    }
   }
 
   console.log(ledgerContext)
@@ -20,6 +22,7 @@ export default function Nav() {
           <div className="left">
             <h1 className="logo">Miser</h1>
             <select onChange={ledgerChange} value={ledgerContext.ledger_id}>
+              <option>select one..</option>
               {Object.values(ledgerContext.ledgers).map(it => (
                 <option key={it.id} value={it.id}>{it.name}</option>
               ))}

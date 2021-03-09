@@ -50,14 +50,13 @@ export const useLedger = () => useContext(LedgerContext)
 
 export const LedgerProvider = ({children}) => {
   const {user} = useAuth();
-  console.log(api);
   let initialState = initCurrentLedger(user);
   api.setLedgerId(initialState);
   const [ledgerId, setLedgerId] = useState(initialState);
-  const transactions = useAsync(async () => api.loadTransactions(), [ledgerId]);
-  const commodities = useAsync(async () => api.loadCommodities(), [ledgerId]);
-  const accounts = useAsync(async () => api.loadAccount(), [ledgerId]);
   const ledgers = useAsync(async () => api.loadLedgers(), []);
+  const transactions = useAsync(async () => ledgerId !== undefined ? api.loadTransactions() : {}, [ledgerId]);
+  const commodities = useAsync(async () => ledgerId !== undefined ?api.loadCommodities():{}, [ledgerId]);
+  const accounts = useAsync(async () => ledgerId !== undefined ?api.loadAccount():{}, [ledgerId]);
 
   const update = async (type: RESOURCE_TYPE) => {
     switch (type) {
@@ -70,16 +69,13 @@ export const LedgerProvider = ({children}) => {
     }
   }
 
-  useEffect(() => {
-    transactions.execute();
-    commodities.execute();
-    accounts.execute();
-  }, [ledgerId])
-
   const changeLedgerId = (id: string) => {
     Cookies.set("CURRENT_LEDGER_ID", id, {expires: 60})
     api.setLedgerId(id);
     setLedgerId(id);
+    transactions.execute();
+    commodities.execute();
+    accounts.execute();
   }
 
   const getAccountAlias = (id: number) => {
