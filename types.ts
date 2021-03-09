@@ -36,7 +36,7 @@ export interface Commodity {
   id: number,
   name: string,
   is_deleted: boolean,
-  last_price?:string,
+  last_price?: string,
   last_price_update_time?: string
 }
 
@@ -48,4 +48,10 @@ export interface User {
   ledgers: string[]
 }
 
-export type RESOURCE_TYPE = "TRANSACTIONS"|"ACCOUNT";
+export interface Ledger {
+  id: number,
+  name: string,
+  operating_commodity: string,
+}
+
+export type RESOURCE_TYPE = "TRANSACTIONS" | "ACCOUNT";

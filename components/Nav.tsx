@@ -10,6 +10,8 @@ export default function Nav() {
   const ledgerChange = (e) => {
     ledgerContext.changeLedgerId(e.target.value)
   }
+
+  console.log(ledgerContext)
   return (
     <>
       <header>

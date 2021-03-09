@@ -2,9 +2,8 @@ import React, {createContext, useContext, useEffect, useState} from "react";
 import Cookies from 'js-cookie'
 import api from "../api";
 import {useAuth} from "./auth";
-import useSWR from "swr";
-import dayjs from "dayjs";
-import {Account, Commodity, RESOURCE_TYPE, User} from "../types"
+import {Account, Commodity, Ledger, RESOURCE_TYPE, User} from "../types"
+import {useAsync} from "react-async-hook";
 
 
 interface IdMap<DATA> {
@@ -19,15 +18,13 @@ interface NameMap<DATA> {
 interface LedgerContext {
   ledger_id: string | undefined,
   transactions: IdMap<any>,
-  ledgers: IdMap<any>,
+  ledgers: IdMap<Ledger>,
   accounts: IdMap<Account>,
   commodities: NameMap<Commodity>
 
   getAccountAlias(id: number): string,
 
   changeLedgerId(id: string): void,
-
-  loadCommodities(): void;
 
   update(type: RESOURCE_TYPE): void;
 
@@ -53,71 +50,31 @@ export const useLedger = () => useContext(LedgerContext)
 
 export const LedgerProvider = ({children}) => {
   const {user} = useAuth();
-
+  console.log(api);
   let initialState = initCurrentLedger(user);
+  api.setLedgerId(initialState);
   const [ledgerId, setLedgerId] = useState(initialState);
-  const [transactions, setTransactions] = useState({});
-  const [accounts, setAccounts] = useState({} as IdMap<Account>);
-  const [ledgers, setLedgers] = useState({});
-  const [commodities, setCommodities] = useState({} as NameMap<Commodity>);
-  const [initLoading, setInitLoading] = useState(0);
+  const transactions = useAsync(async () => api.loadTransactions(), [ledgerId]);
+  const commodities = useAsync(async () => api.loadCommodities(), [ledgerId]);
+  const accounts = useAsync(async () => api.loadAccount(), [ledgerId]);
+  const ledgers = useAsync(async () => api.loadLedgers(), []);
 
   const update = async (type: RESOURCE_TYPE) => {
     switch (type) {
       case "TRANSACTIONS":
-        await loadTransactions();
+        await transactions.execute();
         break;
       case "ACCOUNT":
-        await loadAccount();
+        await accounts.execute();
         break;
     }
   }
 
-
-  async function loadTransactions() {
-    const groupedTransactions = await api.loadTransactions();
-    setTransactions(groupedTransactions);
-  }
-
-  async function loadAccount() {
-    const accountMap = await api.loadAccount();
-    setAccounts(accountMap);
-  }
-
-  const loadCommodities = async () => setCommodities(await api.loadCommodities());
-
-  async function loadLedgers() {
-    const data = await api.loadLedgers();
-    setLedgers(data);
-  }
-
-
   useEffect(() => {
-    console.log("ledgerId changed", ledgerId);
-    api.setLedgerId(ledgerId);
-    if (ledgerId !== undefined) {
-      (async () => {
-        // setInitLoading(initLoading + 1);
-        await loadAccount();
-        await loadCommodities();
-        await loadTransactions();
-        // setInitLoading(initLoading - 1);
-      })()
-    }
+    transactions.execute();
+    commodities.execute();
+    accounts.execute();
   }, [ledgerId])
-
-  useEffect(() => {
-    (async () => {
-      // setInitLoading(initLoading + 1);
-      await loadLedgers();
-      // setInitLoading(initLoading - 1);
-    })()
-  }, [])
-
-  const getAccountAlias = (id: number) => {
-    let account = accounts[id];
-    return account?.alias || account?.full_name;
-  }
 
   const changeLedgerId = (id: string) => {
     Cookies.set("CURRENT_LEDGER_ID", id, {expires: 60})
@@ -125,13 +82,23 @@ export const LedgerProvider = ({children}) => {
     setLedgerId(id);
   }
 
+  const getAccountAlias = (id: number) => {
+    let account = accounts.result[id];
+    return account?.alias || account?.full_name;
+  }
+
   return (
     <LedgerContext.Provider
       value={{
-        initLoading: initLoading !== 0,
-        ledger_id: ledgerId, transactions, ledgers, accounts, commodities,
-        getAccountAlias, changeLedgerId,
-        loadCommodities, update
+        initLoading: transactions.loading || accounts.loading || commodities.loading || ledgers.loading,
+        ledger_id: ledgerId,
+        transactions: transactions.result,
+        ledgers: ledgers.result,
+        accounts: accounts.result,
+        commodities: commodities.result,
+        getAccountAlias,
+        changeLedgerId,
+        update
       }}>
       {children}
     </LedgerContext.Provider>

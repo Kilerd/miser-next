@@ -19,6 +19,7 @@ function Transactions(state: State) {
   console.log("init transaction page");
   const {ledger_id, transactions} = useLedger();
 
+  console.log(" transaction", transactions);
 
   let groupedTransactions: { [key: string]: any } = {}
   for (let it of Object.values(transactions)) {
