@@ -7,6 +7,7 @@ export interface State {
 
 // create your reducer
 const reducer = (state: State = {tick: 'init'}, action: AnyAction) => {
+  console.log("reducer", state, action);
   switch (action.type) {
     case HYDRATE:
       // Attention! This will overwrite client state! Real apps should use proper reconciliation.

@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import {useRouter} from 'next/router'
 import api from '../api'
 import {User} from "../types";
+import {useLedger} from "./ledger";
 
 
 export interface AuthContextType {
@@ -80,9 +81,10 @@ export const useAuth = () => useContext(AuthContext)
 
 export const ProtectRoute = (ChildComponent) => (args) => {
   const {isAuthenticated, loading} = useAuth();
+  const {initLoading} = useLedger();
   const router = useRouter();
 
-  if (loading) {
+  if (loading || initLoading) {
     return <div>loading</div>
   }
   if (!isAuthenticated && !UNAUTHENTICATED_ROUTE.includes(router.asPath)) {

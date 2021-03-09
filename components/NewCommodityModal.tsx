@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import Modal from 'react-modal'
 import api from "../api";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 
 export default function NewCommodityModal({modalStatus, setModalStatus}) {
-  const ledgerContext = userLedger();
+  const ledgerContext = useLedger();
   const [name, setName] = useState("");
   const [isLoading, setLoading] = useState(false);
   const canBeSubmit = name !== '' && !isLoading;

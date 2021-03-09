@@ -28,7 +28,10 @@ interface LedgerContext {
   changeLedgerId(id: string): void,
 
   loadCommodities(): void;
+
   update(type: RESOURCE_TYPE): void;
+
+  initLoading: boolean
 }
 
 
@@ -45,7 +48,7 @@ function initContext(): LedgerContext {
 
 
 const LedgerContext = createContext(initContext());
-export const userLedger = () => useContext(LedgerContext)
+export const useLedger = () => useContext(LedgerContext)
 
 
 export const LedgerProvider = ({children}) => {
@@ -57,7 +60,7 @@ export const LedgerProvider = ({children}) => {
   const [accounts, setAccounts] = useState({} as IdMap<Account>);
   const [ledgers, setLedgers] = useState({});
   const [commodities, setCommodities] = useState({} as NameMap<Commodity>);
-
+  const [initLoading, setInitLoading] = useState(0);
 
   const update = async (type: RESOURCE_TYPE) => {
     switch (type) {
@@ -93,14 +96,22 @@ export const LedgerProvider = ({children}) => {
     console.log("ledgerId changed", ledgerId);
     api.setLedgerId(ledgerId);
     if (ledgerId !== undefined) {
-      loadAccount();
-      loadCommodities();
-      loadTransactions();
+      (async () => {
+        // setInitLoading(initLoading + 1);
+        await loadAccount();
+        await loadCommodities();
+        await loadTransactions();
+        // setInitLoading(initLoading - 1);
+      })()
     }
   }, [ledgerId])
 
   useEffect(() => {
-    loadLedgers();
+    (async () => {
+      // setInitLoading(initLoading + 1);
+      await loadLedgers();
+      // setInitLoading(initLoading - 1);
+    })()
   }, [])
 
   const getAccountAlias = (id: number) => {
@@ -117,6 +128,7 @@ export const LedgerProvider = ({children}) => {
   return (
     <LedgerContext.Provider
       value={{
+        initLoading: initLoading !== 0,
         ledger_id: ledgerId, transactions, ledgers, accounts, commodities,
         getAccountAlias, changeLedgerId,
         loadCommodities, update

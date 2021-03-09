@@ -1,13 +1,14 @@
 import React from "react";
 import Big from 'big.js'
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 import classNames from "classnames";
 import dayjs from 'dayjs'
 import api from "../api";
+import Link from "next/link";
 
 export default function TransactionLine({id, flag, narration, payee, create_time, lines, is_balance, setEditId}) {
 
-  const {getAccountAlias, update} = userLedger();
+  const {getAccountAlias, update} = useLedger();
 
 
   // todo multiple commodities
@@ -34,7 +35,9 @@ export default function TransactionLine({id, flag, narration, payee, create_time
         notBalance: !is_balance,
       })}>
         <div className="left">
-          <div className="info"><span>{payee}</span> {narration}</div>
+          <Link href={`/transactions/${id}`}>
+            <div className="info"><span>{payee}</span> {narration}</div>
+          </Link>
           <div className="time">{s}</div>
         </div>
         <div className="right">
@@ -46,7 +49,7 @@ export default function TransactionLine({id, flag, narration, payee, create_time
             <a onClick={() => setEditId(id)}>edit</a>
             <a onClick={() => deleteTrx(id)}>delete</a>
           </div>
-          </div>
+        </div>
       </div>
       <style jsx>{`
         .line {
@@ -75,6 +78,7 @@ export default function TransactionLine({id, flag, narration, payee, create_time
 
             .info {
               font-size: 1rem;
+              cursor: pointer;
 
               span {
                 font-weight: 500;
@@ -89,14 +93,16 @@ export default function TransactionLine({id, flag, narration, payee, create_time
 
           .right {
             display: flex;
-            .info{
+
+            .info {
               display: flex;
               flex-direction: column;
               align-items: flex-end;
+
               .amount {
                 font-size: 1.25rem;
               }
-  
+
               .orientation {
                 font-size: 0.85rem;
               }

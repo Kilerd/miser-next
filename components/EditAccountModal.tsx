@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import Modal from 'react-modal'
 import api from "../api";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 import {NEXT_PROJECT_ROOT} from "next/dist/lib/constants";
 import {use} from "ast-types";
 
 export default function EditAccountModal({id, name, alias, commodities, modalStatus, setModalStatus}) {
-  const ledgerContext = userLedger();
+  const ledgerContext = useLedger();
 
   const [editName, setEditName] = useState("");
   const [editAlias, setEditAlias] = useState("");

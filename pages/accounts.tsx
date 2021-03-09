@@ -1,7 +1,7 @@
 import {ProtectRoute, useAuth} from "../contexts/auth";
 import React, {useState} from "react";
 import AuthenticationLayout from "../components/AuthenticationLayout";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 import AccountListItem from "../components/AccountListItem";
 import {Account, AccountListItemType} from "../types";
 import NewAccountModal from "../components/NewAccountModal";
@@ -94,7 +94,7 @@ export function accountTreeGenerator(value: { [id: number]: Account }) {
 function Accounts() {
 
   const {user} = useAuth();
-  const ledgerContext = userLedger();
+  const ledgerContext = useLedger();
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const [editAccountData, setEditAccountData] = useState({id: null, name: "", alias: "", commodities: []});

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import {useAuth} from "../contexts/auth";
 import React from "react";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 
 export default function Nav() {
   const {user} = useAuth();
-  const ledgerContext = userLedger();
+  const ledgerContext = useLedger();
 
   const ledgerChange = (e) => {
     ledgerContext.changeLedgerId(e.target.value)

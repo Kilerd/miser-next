@@ -1,14 +1,13 @@
 import {ProtectRoute} from "../contexts/auth";
 import {connect} from 'react-redux'
-import {State} from "../store";
 import React, {useState} from "react";
 import AuthenticationLayout from "../components/AuthenticationLayout";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 import NewCommodityModal from "../components/NewCommodityModal";
 
 
-function Commodities(state: State) {
-  const ledgerContext = userLedger();
+function Commodities() {
+  const ledgerContext = useLedger();
   const [modalIsOpen, setIsOpen] = useState(false);
 
 
@@ -26,4 +25,4 @@ function Commodities(state: State) {
 }
 
 
-export default connect(state => state)(ProtectRoute(Commodities))
+export default ProtectRoute(Commodities)

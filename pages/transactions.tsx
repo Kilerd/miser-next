@@ -1,14 +1,13 @@
 import {ProtectRoute} from "../contexts/auth";
 import {connect} from 'react-redux'
-import {State, stateWrapper} from "../store";
 import React, {useState} from "react";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 import TransactionGroup from "../components/TransactionGroup";
 import AuthenticationLayout from "../components/AuthenticationLayout";
-import NewCommodityModal from "../components/NewCommodityModal";
 import NewTransactionModal from "../components/NewTransactionModal";
 import EditTransactionModal from "../components/EditTransactionModal";
 import dayjs from "dayjs";
+import {State, stateWrapper} from "../store";
 
 export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, res, ...etc}) => {
   // console.log('2. Page.getServerSideProps uses the store to dispatch things');
@@ -17,7 +16,8 @@ export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, 
 
 
 function Transactions(state: State) {
-  const {ledger_id, transactions} = userLedger();
+  console.log("init transaction page");
+  const {ledger_id, transactions} = useLedger();
 
 
   let groupedTransactions: { [key: string]: any } = {}
@@ -33,7 +33,10 @@ function Transactions(state: State) {
 
   const [editId, setEditId] = useState(null);
   const [editTrxStatus, setEditTrxStatus] = useState(false);
-  const openEditTrxModal = (id) => {setEditId(id); setEditTrxStatus(true)};
+  const openEditTrxModal = (id) => {
+    setEditId(id);
+    setEditTrxStatus(true)
+  };
 
   return (
     <>
@@ -54,14 +57,13 @@ function Transactions(state: State) {
 
       <style jsx>{`
         .container {
-          
+
           max-width: 85%;
           margin: 0 auto;
-        
+
         }
       `}</style>
     </>
-
   )
 }
 

@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import Modal from 'react-modal'
 import api from "../api";
-import {userLedger} from "../contexts/ledger";
+import {useLedger} from "../contexts/ledger";
 import Big from 'big.js';
 import Select from 'react-select';
 import dayjs from "dayjs";
 
 export default function NewTransactionModal({modalStatus, setModalStatus}) {
-  const ledgerContext = userLedger();
+  const ledgerContext = useLedger();
 
   const [simpleMode, setSimpleMode] = useState(true);
 
