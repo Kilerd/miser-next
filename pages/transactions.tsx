@@ -10,16 +10,13 @@ import dayjs from "dayjs";
 import {State, stateWrapper} from "../store";
 
 export const getServerSideProps = stateWrapper.getServerSideProps(({store, req, res, ...etc}) => {
-  // console.log('2. Page.getServerSideProps uses the store to dispatch things');
   store.dispatch({type: 'TICK', payload: 'was set in other page'});
 })
 
 
 function Transactions(state: State) {
-  console.log("init transaction page");
   const {ledger_id, transactions} = useLedger();
 
-  console.log(" transaction", transactions);
 
   let groupedTransactions: { [key: string]: any } = {}
   for (let it of Object.values(transactions)) {

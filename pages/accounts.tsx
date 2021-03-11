@@ -100,14 +100,12 @@ function Accounts() {
   const [editAccountData, setEditAccountData] = useState({id: null, name: "", alias: "", commodities: []});
   const [editAccountModalStatus, setEditAccountModalStatus] = useState(false);
   const openEditAccount = (id, name, alias, commodities) => {
-    console.log(id, name, alias, commodities);
     setEditAccountData({id, name, alias, commodities});
     setEditAccountModalStatus(true);
   }
 
 
   const accountTreeGenerator1 = accountTreeGenerator(ledgerContext.accounts);
-  console.log(accountTreeGenerator1);
   return (
     <>
       <AuthenticationLayout>

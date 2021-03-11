@@ -30,7 +30,6 @@ export default function TransactionLine({id, flag, narration, payee, create_time
 
   const color = amount.s === 1 ? 'green' : 'red'
 
-  console.log("amount", amount);
 
 
   const s = dayjs(create_time).format("HH:mm");

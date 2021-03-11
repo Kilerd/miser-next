@@ -13,7 +13,6 @@ export default function Nav() {
     }
   }
 
-  console.log(ledgerContext)
   return (
     <>
       <header>

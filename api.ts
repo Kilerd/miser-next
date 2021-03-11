@@ -50,7 +50,7 @@ class Api {
     const {data: trxRes} = await this.client.get(`/ledgers/${this.currentLedgerId}/journals`);
     const transactions = trxRes.data;
 
-    let trxMap: {[id: number]: any} = {}
+    let trxMap: { [id: number]: any } = {}
     for (let transaction of transactions) {
       trxMap[transaction.id] = transaction;
     }
@@ -102,6 +102,7 @@ class Api {
       lines
     })
   }
+
   async updateTransaction(id: number, date: Date, payee: string, narration: string, tags: string[], links: string[], lines: any[]) {
     return await this.client.put(`/ledgers/${this.currentLedgerId}/transactions/${id}`, {
       date,
@@ -112,6 +113,7 @@ class Api {
       lines
     })
   }
+
   async deleteTransaction(id: number) {
     return await this.client.delete(`/ledgers/${this.currentLedgerId}/transactions/${id}`)
   }
@@ -134,12 +136,27 @@ class Api {
     }
     return await this.client.post(`/ledgers/${this.currentLedgerId}/accounts`, data)
   }
+
   async updateAccount(id: number, name: string, alias: string, commodities: string[]) {
     return await this.client.put(`/ledgers/${this.currentLedgerId}/accounts/${id}`, {
-      account_type:"Expenses",
+      account_type: "Expenses",
       full_name: name,
       alias,
       commodities
+    })
+  }
+
+  async getDocuments(transactionId: number) {
+    return await this.client.get(`/ledgers/${this.currentLedgerId}/transactions/${transactionId}/documents`)
+  }
+
+  async uploadDocument(id, acceptedFiles: any) {
+    let formData = new FormData();
+    formData.append("data", acceptedFiles[0]);
+    return await this.client.post(`/ledgers/${this.currentLedgerId}/transactions/${id}/documents`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
   }
 }
