@@ -13,8 +13,7 @@ function SingleTransactionPage() {
     const ledgerContext = useLedger();
     const targetTransaction = ledgerContext.transactions[id];
     if (targetTransaction === undefined) {
-        router.push("/error");
-        return <></>
+        return <div>404</div>
     }
 
     const {
