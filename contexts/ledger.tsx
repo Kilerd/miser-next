@@ -55,8 +55,8 @@ export const LedgerProvider = ({children}) => {
   const [ledgerId, setLedgerId] = useState(initialState);
   const ledgers = useAsync(async () => api.loadLedgers(), []);
   const transactions = useAsync(async () => ledgerId !== undefined ? api.loadTransactions() : {}, [ledgerId]);
-  const commodities = useAsync(async () => ledgerId !== undefined ?api.loadCommodities():{}, [ledgerId]);
-  const accounts = useAsync(async () => ledgerId !== undefined ?api.loadAccount():{}, [ledgerId]);
+  const commodities = useAsync(async () => ledgerId !== undefined ? api.loadCommodities() : {}, [ledgerId]);
+  const accounts = useAsync(async () => ledgerId !== undefined ? api.loadAccount() : {}, [ledgerId]);
 
   const update = async (type: RESOURCE_TYPE) => {
     switch (type) {
@@ -65,6 +65,9 @@ export const LedgerProvider = ({children}) => {
         break;
       case "ACCOUNT":
         await accounts.execute();
+        break;
+      case "COMMODITY":
+        await commodities.execute();
         break;
     }
   }

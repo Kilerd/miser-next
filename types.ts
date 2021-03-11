@@ -54,4 +54,4 @@ export interface Ledger {
   operating_commodity: string,
 }
 
-export type RESOURCE_TYPE = "TRANSACTIONS" | "ACCOUNT";
+export type RESOURCE_TYPE = "TRANSACTIONS" | "ACCOUNT" | "COMMODITY";

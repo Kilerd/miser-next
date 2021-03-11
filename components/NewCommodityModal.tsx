@@ -15,7 +15,7 @@ export default function NewCommodityModal({modalStatus, setModalStatus}) {
     setLoading(false);
     setModalStatus(false);
     setName("");
-    ledgerContext.loadCommodities()
+    ledgerContext.update("COMMODITY");
   }
   return (
     <Modal
