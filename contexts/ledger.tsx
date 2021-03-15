@@ -2,17 +2,8 @@ import React, {createContext, useContext, useEffect, useState} from "react";
 import Cookies from 'js-cookie'
 import api from "../api";
 import {useAuth} from "./auth";
-import {Account, Commodity, Ledger, RESOURCE_TYPE, User} from "../types"
+import {Account, Commodity, IdMap, Ledger, NameMap, RESOURCE_TYPE, User} from "../types"
 import {useAsync} from "react-async-hook";
-
-
-interface IdMap<DATA> {
-  [id: number]: DATA
-}
-
-interface NameMap<DATA> {
-  [name: string]: DATA
-}
 
 
 interface LedgerContext {

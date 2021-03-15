@@ -1,3 +1,11 @@
+export interface IdMap<DATA> {
+  [id: number]: DATA
+}
+
+export interface NameMap<DATA> {
+  [name: string]: DATA
+}
+
 export interface AccountListItemType {
   name: string,
   fullName: string,

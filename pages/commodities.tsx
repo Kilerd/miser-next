@@ -15,12 +15,30 @@ function Commodities() {
     <div key={one.id}>{one.name}</div>
   ));
   return (
-    <AuthenticationLayout>
-      <h1>Commodities</h1>
-      <NewCommodityModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
-      <button onClick={() => setIsOpen(true)} className="button"> new</button>
-      {commoditiesDOM}
-    </AuthenticationLayout>
+    <>
+      <AuthenticationLayout>
+        <NewCommodityModal modalStatus={modalIsOpen} setModalStatus={setIsOpen}/>
+
+        <div className="container">
+          <div className="header">
+            <h1>Commodities</h1>
+            <button onClick={() => setIsOpen(true)} className="button"> new</button>
+          </div>
+
+
+          {commoditiesDOM}
+        </div>
+
+      </AuthenticationLayout>
+      <style jsx>{`
+        .header {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        }
+      `}</style>
+    </>
+
   )
 }
 

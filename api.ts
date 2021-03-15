@@ -1,5 +1,6 @@
 import Axios, {AxiosInstance} from 'axios'
 import dayjs from "dayjs";
+import {Commodity, IdMap, NameMap} from "./types";
 
 const urls = {
   development: "http://localhost:8000",
@@ -67,10 +68,10 @@ class Api {
     return accountMap;
   }
 
-  async loadCommodities() {
+  async loadCommodities(): Promise<NameMap<Commodity>> {
     const {data: res} = await this.client.get(`/ledgers/${this.currentLedgerId}/commodities`);
     const data = res.data;
-    let commodities_map: { [name: string]: any } = {}
+    let commodities_map: { [name: string]: Commodity } = {}
     for (let it of data) {
       commodities_map[it.name] = it;
     }
@@ -158,6 +159,11 @@ class Api {
         'Content-Type': 'multipart/form-data'
       }
     })
+  }
+
+  async loadTransactionsByAccounts(id: string | string[]) {
+    // todo
+    return this.loadTransactions();
   }
 }
 

@@ -39,12 +39,14 @@ function Transactions(state: State) {
   return (
     <>
       <AuthenticationLayout>
-        <div className="container">
-          <h1>Transactions for ledger {ledger_id}</h1>
-          <NewTransactionModal modalStatus={newTrxStatus} setModalStatus={setNewTrxStatus}/>
-          <EditTransactionModal editId={editId} modalStatus={editTrxStatus} setModalStatus={setEditTrxStatus}/>
+        <NewTransactionModal modalStatus={newTrxStatus} setModalStatus={setNewTrxStatus}/>
+        <EditTransactionModal editId={editId} modalStatus={editTrxStatus} setModalStatus={setEditTrxStatus}/>
 
-          <button onClick={() => setNewTrxStatus(true)} className="button"> new</button>
+        <div className="container">
+          <div className="header">
+            <h1>Transactions for ledger {ledger_id}</h1>
+            <button onClick={() => setNewTrxStatus(true)} className="button"> new</button>
+          </div>
 
           {Object.entries(groupedTransactions).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()).reverse().map(item => {
             const [date, trxs] = item;
@@ -52,13 +54,11 @@ function Transactions(state: State) {
           })}
         </div>
       </AuthenticationLayout>
-
       <style jsx>{`
-        .container {
-
-          max-width: 85%;
-          margin: 0 auto;
-
+        .header {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
         }
       `}</style>
     </>

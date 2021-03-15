@@ -51,6 +51,7 @@ export default function Nav() {
             justify-content: space-between;
             max-width: 90%;
             margin: 0 auto;
+            padding: 0;
 
             .left {
               display: flex;
